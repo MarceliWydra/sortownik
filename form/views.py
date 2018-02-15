@@ -4,20 +4,21 @@ import re
 
 def numbers_send(request):
     sent = False
+    message = 0
     if request.method == 'POST':
         sent = True
         form= NumberForm(request.POST)
         if form.is_valid():
                 cd = form.cleaned_data
                 numbers= cd['numbers']
-                ptr = r'(\d+)'
-                if re.match(ptr,numbers):
+                n = numbers.replace(',','')
+                if n.isdigit():
                     n= numbers.split(",")
-                    n.sort()
+                    n.sort(key=int)
                     numbers = ","
                     message = numbers.join(n)
-
+                else:
+                    message = 'Złe dane!'
     else:
-        message = 'Nic sie nie dzieje'
         form = NumberForm()
     return render(request, 'form/templates/form/index.html', {'sent': sent,'message': message, 'form':form})
