@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .forms import NumberForm
+from .models import Numbers
 import re
+
 
 def numbers_send(request):
     sent = False
@@ -11,14 +13,7 @@ def numbers_send(request):
         if form.is_valid():
                 cd = form.cleaned_data
                 numbers= cd['numbers']
-                n = numbers.replace(',','')
-                if n.isdigit():
-                    n= numbers.split(",")
-                    n.sort(key=int)
-                    numbers = ","
-                    message = numbers.join(n)
-                else:
-                    message = 'Złe dane!'
+                message = Numbers.numbers_sort(numbers)
     else:
         form = NumberForm()
     return render(request, 'form/templates/form/index.html', {'sent': sent,'message': message, 'form':form})
